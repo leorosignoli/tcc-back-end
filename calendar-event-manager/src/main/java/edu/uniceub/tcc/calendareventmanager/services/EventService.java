@@ -1,6 +1,6 @@
 package edu.uniceub.tcc.calendareventmanager.services;
 
-import edu.uniceub.tcc.calendareventmanager.api.dtos.EventCreationRequest;
+import edu.uniceub.tcc.calendareventmanager.api.dtos.EventRequest;
 import edu.uniceub.tcc.calendareventmanager.helpers.mappers.EventMapper;
 import edu.uniceub.tcc.calendareventmanager.helpers.monad.Monad;
 import edu.uniceub.tcc.calendareventmanager.repositories.EventRepository;
@@ -18,9 +18,9 @@ public class EventService {
         this.eventRepository = eventRepository;
         this.eventMapper = eventMapper;
     }
-    public void createEvents(final List<EventCreationRequest> eventCreationRequests) {
-        Monad.init(eventCreationRequests)
-                .applyFunction(eventMapper::toModelList)
+    public void createEvents(final List<EventRequest> eventCreateAllRequests, final String eventOwner) {
+        Monad.init(eventCreateAllRequests)
+                .applyFunction(event -> eventMapper.toModelList(eventCreateAllRequests, eventOwner))
                 .applyConsumer(eventRepository::saveAll);
     }
 }

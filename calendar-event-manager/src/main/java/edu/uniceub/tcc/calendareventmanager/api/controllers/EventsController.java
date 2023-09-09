@@ -1,6 +1,6 @@
 package edu.uniceub.tcc.calendareventmanager.api.controllers;
 
-import edu.uniceub.tcc.calendareventmanager.api.dtos.EventCreationRequest;
+import edu.uniceub.tcc.calendareventmanager.api.dtos.EventCreateAllRequest;
 import edu.uniceub.tcc.calendareventmanager.services.EventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +21,7 @@ public class EventsController {
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public void createEvents(@RequestBody final List<EventCreationRequest> events) {
-        eventService.createEvents(events);
+    public void createEvents(@RequestBody final EventCreateAllRequest eventsRequest) {
+        eventService.createEvents(eventsRequest.data(), eventsRequest.eventOwner());
     }
 }
