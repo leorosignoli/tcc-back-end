@@ -4,7 +4,6 @@ public final class LogConstants {
 
   private LogConstants() {}
 
-
   public static final class Monad {
     public static final String DEBUG_GENERIC_MONAD_INITIATED_WITH_OBJECT =
         "Generic Monad initiated with object {}";
@@ -15,5 +14,4 @@ public final class LogConstants {
 
     private Monad() {}
   }
-
 }

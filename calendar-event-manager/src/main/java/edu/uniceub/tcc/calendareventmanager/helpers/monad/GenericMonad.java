@@ -1,12 +1,11 @@
 package edu.uniceub.tcc.calendareventmanager.helpers.monad;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static edu.uniceub.tcc.calendareventmanager.constants.LogConstants.Monad.*;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import static edu.uniceub.tcc.calendareventmanager.constants.LogConstants.Monad.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is a structure that combines program functions and wraps their return values in a type
