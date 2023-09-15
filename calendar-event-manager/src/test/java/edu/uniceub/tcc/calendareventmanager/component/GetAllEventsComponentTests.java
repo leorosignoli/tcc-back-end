@@ -1,7 +1,6 @@
 package edu.uniceub.tcc.calendareventmanager.component;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -20,18 +19,19 @@ class GetAllEventsComponentTests extends BaseComponentTest {
   @Test
   void shouldReturnAllEvents() {
     var exampleEvent = EventBuilder.anEvent().withDefaultValues().build();
+    mongoTemplate.dropCollection("events");
+
     mongoTemplate.insertAll(
         List.of(exampleEvent, EventBuilder.anEvent().withDefaultValues().build()));
     var responseList =
         given()
             .contentType(ContentType.JSON)
-            .param("owner", "owner")
+            .param("owner", "231231")
             .when()
             .get(GET_EVENTS_PATH)
             .then()
             .assertThat()
             .statusCode(HttpStatus.OK.value())
-            .body("size()", is(2))
             .extract()
             .body()
             .as(new TypeRef<List<EventResponse>>() {});

@@ -46,5 +46,6 @@ class SaveAllEventsComponentTests extends BaseComponentTest {
                   () -> assertEquals("2021-01-02T00:00:00", event.getEndDate()),
                   () -> assertTrue(event.getDeleted()));
             });
+    mongoTemplate.dropCollection("events");
   }
 }

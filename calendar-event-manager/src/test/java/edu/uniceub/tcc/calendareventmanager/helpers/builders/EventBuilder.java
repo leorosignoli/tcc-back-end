@@ -54,7 +54,7 @@ public final class EventBuilder {
 
   public EventBuilder withDefaultValues() {
     this.id = null;
-    this.owner = "owner";
+    this.owner = "231231";
     this.title = "title";
     this.startDate = "startDate";
     this.endDate = "endDate";
