@@ -14,14 +14,23 @@ public class Event {
 
   private String endDate;
 
+  private String integrationId;
+
   public Event() {}
 
-  public Event(String id, String owner, String title, String startDate, String endDate) {
+  public Event(
+      String id,
+      String owner,
+      String title,
+      String startDate,
+      String endDate,
+      String integrationId) {
     this.id = id;
     this.owner = owner;
     this.title = title;
     this.startDate = startDate;
     this.endDate = endDate;
+    this.integrationId = integrationId;
   }
 
   public String getId() {
@@ -62,5 +71,13 @@ public class Event {
 
   public void setEndDate(String endDate) {
     this.endDate = endDate;
+  }
+
+  public void setIntegrationId(String integrationId) {
+    this.integrationId = integrationId;
+  }
+
+  public String getIntegrationId() {
+    return integrationId;
   }
 }

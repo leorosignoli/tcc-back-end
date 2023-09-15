@@ -34,6 +34,11 @@ public class GenericMonad<R> {
     return new GenericMonad<>(result);
   }
 
+  public GenericMonad<R> applyLogger(final FunctionalLogger<R> logger) {
+    logger.log(obj);
+    return this;
+  }
+
   public GenericMonad<R> applyConsumer(final Consumer<R> consumer) {
     consumer.accept(obj);
     LOGGER.debug(DEBUG_RESULT_FROM_CONSUMER, obj);
@@ -42,5 +47,10 @@ public class GenericMonad<R> {
 
   public R getValue() {
     return this.obj;
+  }
+
+  @FunctionalInterface
+  public interface FunctionalLogger<T> {
+    void log(T t);
   }
 }

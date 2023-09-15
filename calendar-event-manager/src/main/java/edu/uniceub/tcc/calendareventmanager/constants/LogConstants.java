@@ -14,4 +14,11 @@ public final class LogConstants {
 
     private Monad() {}
   }
+
+  public static final class Event {
+    public static final String INFO_RECEIVED_EVENT_CREATION_REQUEST =
+        "Received event creation request. REQUEST: {}";
+
+    private Event() {}
+  }
 }

@@ -7,12 +7,19 @@ public class EventRequestBuilder {
   private String start;
   private String end;
 
+  private String integrationId;
+
   public static EventRequest withDefaultValues() {
     return new EventRequestBuilder().defaultValues().build();
   }
 
   public EventRequestBuilder title(String title) {
     this.title = title;
+    return this;
+  }
+
+  public EventRequestBuilder integrationId(String integrationId) {
+    this.integrationId = integrationId;
     return this;
   }
 
@@ -30,10 +37,11 @@ public class EventRequestBuilder {
     this.title = "title";
     this.start = "2021-01-01T00:00:00";
     this.end = "2021-01-02T00:00:00";
+    this.integrationId = "integrationId";
     return this;
   }
 
   public EventRequest build() {
-    return new EventRequest(title, start, end);
+    return new EventRequest(title, start, end, integrationId);
   }
 }
