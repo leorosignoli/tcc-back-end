@@ -1,6 +1,7 @@
 package edu.uniceub.tcc.calendareventmanager.helpers.mappers;
 
-import edu.uniceub.tcc.calendareventmanager.api.dtos.EventRequest;
+import edu.uniceub.tcc.calendareventmanager.api.dtos.request.EventRequest;
+import edu.uniceub.tcc.calendareventmanager.api.dtos.response.EventResponse;
 import edu.uniceub.tcc.calendareventmanager.models.Event;
 import java.util.List;
 import org.mapstruct.Mapper;
@@ -25,4 +26,8 @@ public interface EventMapper {
             })
         .toList();
   }
+
+  EventResponse toResponse(Event event);
+
+  List<EventResponse> toResponseList(List<Event> events);
 }

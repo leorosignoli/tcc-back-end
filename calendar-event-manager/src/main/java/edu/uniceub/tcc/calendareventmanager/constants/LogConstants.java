@@ -18,6 +18,8 @@ public final class LogConstants {
   public static final class Event {
     public static final String INFO_RECEIVED_EVENT_CREATION_REQUEST =
         "Received event creation request. REQUEST: {}";
+    public static final String INFO_RECEIVED_GET_EVENTS_FOR_OWNER_REQUEST =
+        "Received get events request for owner  {}";
 
     private Event() {}
   }

@@ -2,7 +2,8 @@ package edu.uniceub.tcc.calendareventmanager.services;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-import edu.uniceub.tcc.calendareventmanager.api.dtos.EventRequest;
+import edu.uniceub.tcc.calendareventmanager.api.dtos.request.EventRequest;
+import edu.uniceub.tcc.calendareventmanager.api.dtos.response.EventResponse;
 import edu.uniceub.tcc.calendareventmanager.helpers.mappers.EventMapper;
 import edu.uniceub.tcc.calendareventmanager.helpers.monad.Monad;
 import edu.uniceub.tcc.calendareventmanager.models.Event;
@@ -36,6 +37,15 @@ public class EventService {
         .stream()
         .map(Event::getTitle)
         .toList();
+  }
+
+  public List<EventResponse> getEventsForOwner(String eventOwner) {
+
+    return Monad.init(eventOwner)
+        .applyFunction(eventRepository::findAllByOwner)
+        .applyLogger(events -> LOGGER.debug("Events found for owner {}: {}", eventOwner, events))
+        .applyFunction(eventMapper::toResponseList)
+        .getValue();
   }
 
   private final UnaryOperator<List<Event>> removeAllExistingEventsFromList =

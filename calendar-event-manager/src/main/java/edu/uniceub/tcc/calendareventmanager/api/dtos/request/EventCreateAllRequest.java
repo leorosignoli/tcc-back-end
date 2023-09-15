@@ -1,4 +1,4 @@
-package edu.uniceub.tcc.calendareventmanager.api.dtos;
+package edu.uniceub.tcc.calendareventmanager.api.dtos.request;
 
 import java.util.List;
 

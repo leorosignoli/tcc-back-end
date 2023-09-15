@@ -16,6 +16,8 @@ public class Event {
 
   private String integrationId;
 
+  private Boolean isDeleted = false;
+
   public Event() {}
 
   public Event(
@@ -24,13 +26,23 @@ public class Event {
       String title,
       String startDate,
       String endDate,
-      String integrationId) {
+      String integrationId,
+      Boolean isDeleted) {
     this.id = id;
     this.owner = owner;
     this.title = title;
     this.startDate = startDate;
     this.endDate = endDate;
     this.integrationId = integrationId;
+    this.isDeleted = isDeleted;
+  }
+
+  public Boolean getDeleted() {
+    return isDeleted;
+  }
+
+  public void setDeleted(Boolean deleted) {
+    isDeleted = deleted;
   }
 
   public String getId() {

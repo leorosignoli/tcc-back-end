@@ -1,6 +1,6 @@
 package edu.uniceub.tcc.calendareventmanager.helpers.builders;
 
-import edu.uniceub.tcc.calendareventmanager.api.dtos.EventRequest;
+import edu.uniceub.tcc.calendareventmanager.api.dtos.request.EventRequest;
 
 public class EventRequestBuilder {
   private String title;

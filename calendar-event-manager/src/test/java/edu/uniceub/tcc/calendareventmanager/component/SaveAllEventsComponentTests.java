@@ -2,10 +2,9 @@ package edu.uniceub.tcc.calendareventmanager.component;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.http.HttpStatus.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import edu.uniceub.tcc.calendareventmanager.api.dtos.EventCreateAllRequest;
+import edu.uniceub.tcc.calendareventmanager.api.dtos.request.EventCreateAllRequest;
 import edu.uniceub.tcc.calendareventmanager.helpers.builders.EventRequestBuilder;
 import edu.uniceub.tcc.calendareventmanager.models.Event;
 import java.util.List;
@@ -44,7 +43,8 @@ class SaveAllEventsComponentTests extends BaseComponentTest {
                   () -> assertEquals("owner", event.getOwner()),
                   () -> assertEquals("title", event.getTitle()),
                   () -> assertEquals("2021-01-01T00:00:00", event.getStartDate()),
-                  () -> assertEquals("2021-01-02T00:00:00", event.getEndDate()));
+                  () -> assertEquals("2021-01-02T00:00:00", event.getEndDate()),
+                  () -> assertTrue(event.getDeleted()));
             });
   }
 }
