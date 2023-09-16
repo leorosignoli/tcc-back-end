@@ -56,8 +56,8 @@ public final class EventBuilder {
     this.id = null;
     this.owner = "231231";
     this.title = "title";
-    this.startDate = "startDate";
-    this.endDate = "endDate";
+    this.startDate = "2021-06-01 00:00:00 +0000";
+    this.endDate = "2021-06-02 00:00:00 +0000";
     this.integrationId = "integrationId";
     this.isDeleted = false;
     return this;

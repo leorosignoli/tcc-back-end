@@ -27,6 +27,7 @@ class GetAllEventsComponentTests extends BaseComponentTest {
         given()
             .contentType(ContentType.JSON)
             .param("owner", "231231")
+            .param("startDate", "2021-06-01 00:00:00 +0000")
             .when()
             .get(GET_EVENTS_PATH)
             .then()

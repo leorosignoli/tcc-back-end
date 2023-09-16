@@ -42,9 +42,11 @@ public class EventsController {
   }
 
   @GetMapping
-  public List<EventResponse> getEvents(@RequestParam(name = "owner") final String eventOwner) {
+  public List<EventResponse> getEvents(
+      @RequestParam(name = "owner") final String eventOwner,
+      @RequestParam(name = "startDate", required = false) final String startDate) {
     LOGGER.debug(INFO_RECEIVED_GET_EVENTS_FOR_OWNER_REQUEST, eventOwner);
 
-    return eventService.getEventsForOwner(eventOwner);
+    return eventService.getEventsForOwner(eventOwner, startDate);
   }
 }

@@ -8,6 +8,8 @@ import edu.uniceub.tcc.calendareventmanager.helpers.mappers.EventMapper;
 import edu.uniceub.tcc.calendareventmanager.helpers.monad.Monad;
 import edu.uniceub.tcc.calendareventmanager.models.Event;
 import edu.uniceub.tcc.calendareventmanager.repositories.EventRepository;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.function.UnaryOperator;
 import org.slf4j.Logger;
@@ -39,10 +41,11 @@ public class EventService {
         .toList();
   }
 
-  public List<EventResponse> getEventsForOwner(String eventOwner) {
+  public List<EventResponse> getEventsForOwner(String eventOwner, String startDate) {
 
-    return Monad.init(eventOwner)
-        .applyFunction(eventRepository::findAllByOwner)
+    return Monad.init(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss Z"))
+        .applyFunction(formatter -> LocalDateTime.parse(startDate, formatter))
+        .applyFunction(date -> eventRepository.findAllByOwnerAndDate(eventOwner, date))
         .applyLogger(events -> LOGGER.debug("Events found for owner {}: {}", eventOwner, events))
         .applyFunction(eventMapper::toResponseList)
         .getValue();
