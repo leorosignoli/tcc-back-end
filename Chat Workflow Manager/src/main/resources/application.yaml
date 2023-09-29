@@ -1,0 +1,15 @@
+
+server:
+  port : 8081
+
+# CHAT-GPT configuration properties
+openai:
+  api:
+    url: ${GPT_API_URL:https://api.openai.com/v1/chat/completions}
+    key: ${OPENAI_API_KEY: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}
+    model: ${GPT_MODEL:gpt-3.5-turbo}
+
+
+logging:
+  level:
+    root: ${LOGGING_LEVEL_ROOT:INFO`}

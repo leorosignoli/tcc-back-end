@@ -1,8 +1,7 @@
 package edu.uniceub.calendar_man.chatworkflowmanager.controllers;
 
-
 import edu.uniceub.calendar_man.chatworkflowmanager.controllers.request.MessageRequest;
-import edu.uniceub.calendar_man.chatworkflowmanager.controllers.responses.ExchangePostResponse;
+import edu.uniceub.calendar_man.chatworkflowmanager.services.ExchangeService;
 import org.bson.json.JsonObject;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,10 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/exchange")
 public class ExchangeController {
 
+  private final ExchangeService exchangeService;
 
-    @PostMapping
-    public ExchangePostResponse exchangeConversation(@RequestBody final MessageRequest request) {
-        return null;
-    }
+  public ExchangeController(final ExchangeService exchangeService) {
+    this.exchangeService = exchangeService;
+  }
 
+  @PostMapping
+  public JsonObject exchangeConversation(@RequestBody final MessageRequest request) {
+    return exchangeService.exchangeConversation(request);
+  }
 }
