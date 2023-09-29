@@ -6,7 +6,7 @@ server:
 openai:
   api:
     url: ${GPT_API_URL:https://api.openai.com/v1/chat/completions}
-    key: ${OPENAI_API_KEY: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}
+    key: ${OPENAI_API_KEY:1}
     model: ${GPT_MODEL:gpt-3.5-turbo}
 
 
