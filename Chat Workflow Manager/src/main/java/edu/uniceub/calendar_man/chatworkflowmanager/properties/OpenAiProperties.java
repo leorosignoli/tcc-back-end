@@ -19,7 +19,7 @@ public class OpenAiProperties {
     this.url = url;
   }
 
-  public String getKey() {
+  public String getApiKey() {
     return key;
   }
 

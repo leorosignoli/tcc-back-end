@@ -16,6 +16,21 @@
     <properties>
         <java.version>17</java.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-dependencies -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>2022.0.4</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -71,11 +86,36 @@
             <artifactId>mapstruct</artifactId>
             <version>1.5.5.Final</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-openfeign -->
         <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-            <version>1.5.3.Final</version>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>4.0.4</version>
         </dependency>
+
+
+        <!-- https://mvnrepository.com/artifact/com.theokanning.openai-gpt3-java/service -->
+        <dependency>
+            <groupId>com.theokanning.openai-gpt3-java</groupId>
+            <artifactId>service</artifactId>
+            <version>0.16.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.theokanning.openai-gpt3-java/api -->
+        <dependency>
+            <groupId>com.theokanning.openai-gpt3-java</groupId>
+            <artifactId>api</artifactId>
+            <version>0.16.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.theokanning.openai-gpt3-java/client -->
+        <dependency>
+            <groupId>com.theokanning.openai-gpt3-java</groupId>
+            <artifactId>client</artifactId>
+            <version>0.16.0</version>
+        </dependency>
+
+
+
     </dependencies>
 
 

@@ -1,54 +1,72 @@
 package edu.uniceub.calendar_man.chatworkflowmanager.services;
 
 import static edu.uniceub.calendar_man.chatworkflowmanager.constants.ApplicationConstants.OpenAiConstants.CHAT_GPT_SYSTEM_PROMPT;
-import static edu.uniceub.calendar_man.chatworkflowmanager.constants.ApplicationConstants.OpenAiConstants.USER_ROLE;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.uniceub.calendar_man.chatworkflowmanager.clients.OpenAiClient;
-import edu.uniceub.calendar_man.chatworkflowmanager.clients.request.ChatRequest;
-import edu.uniceub.calendar_man.chatworkflowmanager.clients.responses.ChatResponse;
-import edu.uniceub.calendar_man.chatworkflowmanager.clients.responses.Message;
-import edu.uniceub.calendar_man.chatworkflowmanager.controllers.request.MessageRequest;
-import edu.uniceub.calendar_man.chatworkflowmanager.exceptions.OpenApiException;
-import edu.uniceub.calendar_man.chatworkflowmanager.helpers.Monad;
-import edu.uniceub.calendar_man.chatworkflowmanager.properties.OpenAiProperties;
+import com.theokanning.openai.completion.chat.*;
+import com.theokanning.openai.service.FunctionExecutor;
+import com.theokanning.openai.service.OpenAiService;
+import edu.uniceub.calendar_man.chatworkflowmanager.clients.CalendarManagerClient;
+import edu.uniceub.calendar_man.chatworkflowmanager.controllers.request.ConversationRequest;
+import edu.uniceub.calendar_man.chatworkflowmanager.open_ai.functions.Functions;
+import edu.uniceub.calendar_man.chatworkflowmanager.open_ai.functions.contexts.GetEventsRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
 import org.bson.json.JsonObject;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ExchangeService {
-  private final OpenAiClient openAiClient;
 
-  private final OpenAiProperties openAiProperties;
-  private final ObjectMapper mapper;
+  private final OpenAiService openAiService;
 
-  public ExchangeService(final OpenAiClient openAiClient, final OpenAiProperties openAiProperties) {
-    this.openAiClient = openAiClient;
-    this.openAiProperties = openAiProperties;
-    mapper = new ObjectMapper();
+  private final CalendarManagerClient calendarManagerClient;
+
+  public ExchangeService(
+      final OpenAiService openAiService, final CalendarManagerClient calendarManagerClient) {
+    this.openAiService = openAiService;
+    this.calendarManagerClient = calendarManagerClient;
   }
 
-  public JsonObject exchangeConversation(final MessageRequest request) {
+  public ChatMessage exchangeMessages(final ConversationRequest request, final String user) {
 
-    return Monad.init(request.message())
-        .applyFunction(this::chatRequestWithDefaultModel)
-        .applyFunction(openAiClient::exchangeMessage)
-        .applyFunction(this::responseToJson)
-        .getValue();
+    FunctionExecutor functionExecutor =
+        new FunctionExecutor(List.of(Functions.getCalendarEventsFunction(getEvents(user))));
+
+    final List<ChatMessage> messages = new ArrayList<>();
+
+    messages.add(new ChatMessage(ChatMessageRole.SYSTEM.value(), CHAT_GPT_SYSTEM_PROMPT));
+
+    request
+        .messages()
+        .forEach(
+            message ->
+                messages.add(new ChatMessage(message.messageSource().value(), message.message())));
+
+    final ChatCompletionRequest chatCompletionRequest =
+        ChatCompletionRequest.builder()
+            .model("gpt-3.5-turbo")
+            .messages(messages)
+            .functions(functionExecutor.getFunctions())
+            .functionCall(new ChatCompletionRequest.ChatCompletionRequestFunctionCall("auto"))
+            .maxTokens(256)
+            .build();
+
+    ChatMessage responseMessage =
+        openAiService.createChatCompletion(chatCompletionRequest).getChoices().get(0).getMessage();
+
+    ChatFunctionCall functionCall =
+        responseMessage
+            .getFunctionCall();
+
+    final ChatMessage functionResponseMessage =
+        functionExecutor.executeAndConvertToMessageHandlingExceptions(functionCall);
+
+    return responseMessage;
   }
 
-  private ChatRequest chatRequestWithDefaultModel(final String message) {
-    return Monad.init(new ChatRequest(openAiProperties.getModel(), CHAT_GPT_SYSTEM_PROMPT))
-        .applyConsumer(request -> request.getMessages().add(new Message(USER_ROLE, message)))
-        .getValue();
+  private Function<GetEventsRequest, Object> getEvents(final String user) {
+    return request -> calendarManagerClient.getEvents(request.date, user);
   }
-
-  private JsonObject responseToJson(ChatResponse response) {
-    try {
-      return new JsonObject(mapper.writeValueAsString(response));
-    } catch (JsonProcessingException e) {
-      throw OpenApiException.failedToDecodeJson();
-    }
-  }
+  ;
 }

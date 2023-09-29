@@ -1,12 +1,9 @@
 package edu.uniceub.calendar_man.chatworkflowmanager.controllers;
 
-import edu.uniceub.calendar_man.chatworkflowmanager.controllers.request.MessageRequest;
+import com.theokanning.openai.completion.chat.ChatMessage;
+import edu.uniceub.calendar_man.chatworkflowmanager.controllers.request.ConversationRequest;
 import edu.uniceub.calendar_man.chatworkflowmanager.services.ExchangeService;
-import org.bson.json.JsonObject;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/exchange")
@@ -19,7 +16,8 @@ public class ExchangeController {
   }
 
   @PostMapping
-  public JsonObject exchangeConversation(@RequestBody final MessageRequest request) {
-    return exchangeService.exchangeConversation(request);
+  public ChatMessage exchangeConversation(
+      @RequestBody final ConversationRequest data, @RequestHeader("userId") final String userId) {
+    return exchangeService.exchangeMessages(data, userId);
   }
 }
