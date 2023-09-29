@@ -4,8 +4,7 @@ import java.util.List;
 
 public class ChatResponse {
 
-  public ChatResponse() {
-  }
+  public ChatResponse() {}
 
   public ChatResponse(List<Choice> choices) {
     this.choices = choices;
@@ -36,10 +35,7 @@ public class ChatResponse {
 
     @Override
     public String toString() {
-      return "Choice{" +
-              "index=" + index +
-              ", message=" + message +
-              '}';
+      return "Choice{" + "index=" + index + ", message=" + message + '}';
     }
   }
 
@@ -53,8 +49,6 @@ public class ChatResponse {
 
   @Override
   public String toString() {
-    return "ChatResponse{" +
-            "choices=" + choices +
-            '}';
+    return "ChatResponse{" + "choices=" + choices + '}';
   }
 }

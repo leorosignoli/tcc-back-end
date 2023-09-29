@@ -30,7 +30,7 @@ public class OpenAIRestTemplateConfig {
         .getInterceptors()
         .add(
             (request, body, execution) -> {
-                request.getHeaders().setBearerAuth(openaiApiKey);
+              request.getHeaders().setBearerAuth(openaiApiKey);
               request.getHeaders().add("Content-Type", "application/json");
               final ClientHttpResponse response = execution.execute(request, body);
               logResponse(response);
@@ -38,7 +38,6 @@ public class OpenAIRestTemplateConfig {
             });
     return restTemplate;
   }
-
 
   private void logResponse(final ClientHttpResponse response) {
     try {

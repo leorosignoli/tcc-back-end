@@ -5,7 +5,6 @@ import static edu.uniceub.calendar_man.chatworkflowmanager.constants.Application
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Iterables;
 import edu.uniceub.calendar_man.chatworkflowmanager.clients.OpenAiClient;
 import edu.uniceub.calendar_man.chatworkflowmanager.clients.request.ChatRequest;
 import edu.uniceub.calendar_man.chatworkflowmanager.clients.responses.ChatResponse;
@@ -22,12 +21,12 @@ public class ExchangeService {
   private final OpenAiClient openAiClient;
 
   private final OpenAiProperties openAiProperties;
-  private final ObjectMapper mapper ;
+  private final ObjectMapper mapper;
 
   public ExchangeService(final OpenAiClient openAiClient, final OpenAiProperties openAiProperties) {
     this.openAiClient = openAiClient;
     this.openAiProperties = openAiProperties;
-    mapper= new ObjectMapper();
+    mapper = new ObjectMapper();
   }
 
   public JsonObject exchangeConversation(final MessageRequest request) {
@@ -36,7 +35,7 @@ public class ExchangeService {
         .applyFunction(this::chatRequestWithDefaultModel)
         .applyFunction(openAiClient::exchangeMessage)
         .applyFunction(this::responseToJson)
-            .getValue();
+        .getValue();
   }
 
   private ChatRequest chatRequestWithDefaultModel(final String message) {

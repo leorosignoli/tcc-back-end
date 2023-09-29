@@ -29,7 +29,7 @@ public class OpenAiClient {
 
   public ChatResponse exchangeMessage(final ChatRequest request) {
     try {
-        LOGGER.info("Sending request to OpenAI: {}", request);
+      LOGGER.info("Sending request to OpenAI: {}", request);
       final ResponseEntity<ChatResponse> responseEntity =
           restTemplate.postForEntity(openAiProperties.getUrl(), request, ChatResponse.class);
 
