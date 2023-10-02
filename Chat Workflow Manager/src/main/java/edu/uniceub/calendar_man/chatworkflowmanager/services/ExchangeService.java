@@ -12,12 +12,10 @@ import edu.uniceub.calendar_man.chatworkflowmanager.models.Event;
 import edu.uniceub.calendar_man.chatworkflowmanager.open_ai.functions.FunctionUtils;
 import edu.uniceub.calendar_man.chatworkflowmanager.open_ai.functions.contexts.GetEventsRequest;
 import edu.uniceub.calendar_man.chatworkflowmanager.properties.OpenAiProperties;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import org.apache.commons.lang3.StringUtils;
-import org.bson.json.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
@@ -84,8 +82,8 @@ public class ExchangeService {
   private FunctionExecutor getFunctionExecutor(String user) {
     return new FunctionExecutor(
         List.of(
-            FunctionUtils.getCalendarEventsFunction(getEventsMock(user)),
-            FunctionUtils.scheduleNewEvent(scheduleEventsMock(user)),
+            FunctionUtils.getCalendarEventsFunction(getEvents(user)),
+            FunctionUtils.scheduleNewEvent(scheduleEvents(user)),
             FunctionUtils.getCurrentDate()));
   }
 
@@ -116,17 +114,7 @@ public class ExchangeService {
     return request -> calendarManagerClient.getEvents(request.date, user);
   }
 
-  private Function<GetEventsRequest, Object> getEventsMock(final String user) {
-    return request ->
-        List.of(
-            new Event(
-                "Test",
-                "Test",
-                LocalDateTime.now().plusHours(1).toString(),
-                LocalDateTime.now().plusHours(2).toString()));
-  }
-
-  private Function<Event, Object> scheduleEventsMock(final String user) {
-    return request -> new JsonObject("{ \"message\": \"Event scheduled successfully!\"}");
+  private Function<Event, Object> scheduleEvents(final String user) {
+    return event -> calendarManagerClient.createEvent(event, user);
   }
 }

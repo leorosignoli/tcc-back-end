@@ -36,10 +36,10 @@ public final class FunctionUtils {
   public static ChatFunction getCurrentDate() {
     return ChatFunction.builder()
         .name("get_current_date")
-        .description("returns the current date.")
+        .description("Returns the current date.")
         .executor(
             Object.class,
-            (empty) -> GetCurrentDateResponse.fromDate(LocalDateTime.now().toString()))
+            empty -> GetCurrentDateResponse.fromDate(LocalDateTime.now().toString()))
         .build();
   }
 }
