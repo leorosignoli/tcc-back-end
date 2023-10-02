@@ -19,7 +19,7 @@ public final class FunctionUtils {
       final Function<GetEventsRequest, Object> getEvents) {
     return ChatFunction.builder()
         .name("get_calendar_context")
-        .description("Get the user's calendar events for the given date.")
+        .description("Accesses the user's calendar and gets the events for the given date.")
         .executor(GetEventsRequest.class, getEvents)
         .build();
   }

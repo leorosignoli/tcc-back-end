@@ -15,8 +15,8 @@ public final class MockOpenaiFunctions {
     return request ->
         List.of(
             new Event(
-                "Test",
-                "Test",
+                "dqd9wjd",
+                "Reuniao",
                 LocalDateTime.now().plusHours(1).toString(),
                 LocalDateTime.now().plusHours(2).toString()));
   }
