@@ -1,18 +1,24 @@
 package edu.uniceub.calendar_man.chatworkflowmanager.services;
 
 import static edu.uniceub.calendar_man.chatworkflowmanager.constants.ApplicationConstants.OpenAiConstants.CHAT_GPT_SYSTEM_PROMPT;
+import static edu.uniceub.calendar_man.chatworkflowmanager.open_ai.functions.FunctionUtils.ASSISTANT_ACTION_FUNCTIONS;
 
+import com.google.common.collect.Iterables;
 import com.theokanning.openai.completion.chat.*;
 import com.theokanning.openai.service.FunctionExecutor;
 import com.theokanning.openai.service.OpenAiService;
 import edu.uniceub.calendar_man.chatworkflowmanager.clients.CalendarManagerClient;
-import edu.uniceub.calendar_man.chatworkflowmanager.controllers.request.ConversationRequest;
-import edu.uniceub.calendar_man.chatworkflowmanager.open_ai.functions.Functions;
+import edu.uniceub.calendar_man.chatworkflowmanager.models.Event;
+import edu.uniceub.calendar_man.chatworkflowmanager.open_ai.functions.FunctionUtils;
 import edu.uniceub.calendar_man.chatworkflowmanager.open_ai.functions.contexts.GetEventsRequest;
+import edu.uniceub.calendar_man.chatworkflowmanager.properties.OpenAiProperties;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.json.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,51 +28,105 @@ public class ExchangeService {
 
   private final CalendarManagerClient calendarManagerClient;
 
+  private final OpenAiProperties openAiProperties;
+
   public ExchangeService(
-      final OpenAiService openAiService, final CalendarManagerClient calendarManagerClient) {
+      final OpenAiService openAiService,
+      final CalendarManagerClient calendarManagerClient,
+      final OpenAiProperties openAiProperties) {
     this.openAiService = openAiService;
     this.calendarManagerClient = calendarManagerClient;
+    this.openAiProperties = openAiProperties;
   }
 
-  public ChatMessage exchangeMessages(final ConversationRequest request, final String user) {
+  public List<ChatMessage> exchangeMessages(
+      final List<ChatMessage> requestMessages, final String user) {
 
-    FunctionExecutor functionExecutor =
-        new FunctionExecutor(List.of(Functions.getCalendarEventsFunction(getEvents(user))));
+    final FunctionExecutor functionExecutor = getFunctionExecutor(user);
 
     final List<ChatMessage> messages = new ArrayList<>();
 
-    messages.add(new ChatMessage(ChatMessageRole.SYSTEM.value(), CHAT_GPT_SYSTEM_PROMPT));
+    addSystemPrompt(requestMessages, messages);
 
-    request
-        .messages()
-        .forEach(
-            message ->
-                messages.add(new ChatMessage(message.messageSource().value(), message.message())));
+    final ChatMessage responseMessage =
+        openAiService
+            .createChatCompletion(buildChatRequest(messages, functionExecutor, user))
+            .getChoices()
+            .get(0)
+            .getMessage();
 
-    final ChatCompletionRequest chatCompletionRequest =
-        ChatCompletionRequest.builder()
-            .model("gpt-3.5-turbo")
-            .messages(messages)
-            .functions(functionExecutor.getFunctions())
-            .functionCall(new ChatCompletionRequest.ChatCompletionRequestFunctionCall("auto"))
-            .maxTokens(256)
-            .build();
+    messages.add(responseMessage);
 
-    ChatMessage responseMessage =
-        openAiService.createChatCompletion(chatCompletionRequest).getChoices().get(0).getMessage();
+    functionExecutor
+        .executeAndConvertToMessageSafely(responseMessage.getFunctionCall())
+        .ifPresent(messages::add);
 
-    ChatFunctionCall functionCall =
-        responseMessage
-            .getFunctionCall();
+    if (requiresAssistantAction(messages)) {
+      return exchangeMessages(messages, user);
+    }
 
-    final ChatMessage functionResponseMessage =
-        functionExecutor.executeAndConvertToMessageHandlingExceptions(functionCall);
+    return messages;
+  }
 
-    return responseMessage;
+  private ChatCompletionRequest buildChatRequest(
+      List<ChatMessage> messages, FunctionExecutor functionExecutor, String userId) {
+    return ChatCompletionRequest.builder()
+        .model(openAiProperties.getModel())
+        .messages(messages)
+        .functions(functionExecutor.getFunctions())
+        .functionCall(new ChatCompletionRequest.ChatCompletionRequestFunctionCall("auto"))
+        .maxTokens(256)
+        .user(userId)
+        .build();
+  }
+
+  @NotNull
+  private FunctionExecutor getFunctionExecutor(String user) {
+    return new FunctionExecutor(
+        List.of(
+            FunctionUtils.getCalendarEventsFunction(getEventsMock(user)),
+            FunctionUtils.scheduleNewEvent(scheduleEventsMock(user)),
+            FunctionUtils.getCurrentDate()));
+  }
+
+  private static void addSystemPrompt(
+      final List<ChatMessage> requestMessages, final List<ChatMessage> messages) {
+    requestMessages.stream()
+        .findFirst()
+        .ifPresent(
+            message -> {
+              if (!CHAT_GPT_SYSTEM_PROMPT.equals(message.getContent())) {
+                messages.add(
+                    new ChatMessage(ChatMessageRole.SYSTEM.value(), CHAT_GPT_SYSTEM_PROMPT));
+              }
+            });
+
+    messages.addAll(requestMessages);
+  }
+
+  private static boolean requiresAssistantAction(List<ChatMessage> messages) {
+    final var name = Iterables.getLast(messages).getName();
+    if (StringUtils.isNotBlank(name)) {
+      return ASSISTANT_ACTION_FUNCTIONS.contains(name);
+    }
+    return false;
   }
 
   private Function<GetEventsRequest, Object> getEvents(final String user) {
     return request -> calendarManagerClient.getEvents(request.date, user);
   }
-  ;
+
+  private Function<GetEventsRequest, Object> getEventsMock(final String user) {
+    return request ->
+        List.of(
+            new Event(
+                "Test",
+                "Test",
+                LocalDateTime.now().plusHours(1).toString(),
+                LocalDateTime.now().plusHours(2).toString()));
+  }
+
+  private Function<Event, Object> scheduleEventsMock(final String user) {
+    return request -> new JsonObject("{ \"message\": \"Event scheduled successfully!\"}");
+  }
 }
