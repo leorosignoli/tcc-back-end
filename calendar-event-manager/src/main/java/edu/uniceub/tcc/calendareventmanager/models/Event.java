@@ -61,6 +61,11 @@ public class Event {
     this.owner = owner;
   }
 
+  public Event withOwner(String owner) {
+    this.owner = owner;
+    return this;
+  }
+
   public String getTitle() {
     return title;
   }

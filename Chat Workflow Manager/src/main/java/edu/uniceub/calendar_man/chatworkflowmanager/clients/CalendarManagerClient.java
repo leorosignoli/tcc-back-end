@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.*;
 @FeignClient(url = "${clients.calendar_manager.url}", value = "calendar-event-manager-client")
 public interface CalendarManagerClient {
 
-  @GetMapping("/events")
+  @GetMapping("/events/{owner}")
   List<Event> getEvents(
-      @RequestParam("startDate") String startDate, @RequestParam("owner") String eventOwner);
+      @RequestParam("startDate") String startDate, @PathVariable String owner);
 
-  @PostMapping("/events/user/{userId}")
-  CreateEventResponse createEvent(@RequestBody Event event, @PathVariable String userId);
+  @PostMapping("/events/simpleEvent")
+  CreateEventResponse createEvent(@RequestBody Event event, @RequestHeader(name = "owner") String userId);
 }

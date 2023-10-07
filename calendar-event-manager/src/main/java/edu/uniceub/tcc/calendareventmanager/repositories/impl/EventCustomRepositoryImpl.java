@@ -5,6 +5,8 @@ import static org.slf4j.LoggerFactory.getLogger;
 import edu.uniceub.tcc.calendareventmanager.helpers.monad.Monad;
 import edu.uniceub.tcc.calendareventmanager.models.Event;
 import edu.uniceub.tcc.calendareventmanager.repositories.EventCustomRepository;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +35,7 @@ public class EventCustomRepositoryImpl implements EventCustomRepository {
   }
 
   @Override
-  public List<Event> findAllByOwnerAndDate(String owner, LocalDateTime startDate) {
+  public List<Event> findAllByOwnerAndDate(String owner, LocalDate startDate) {
 
     return Monad.init(
             new Query(
@@ -42,7 +44,7 @@ public class EventCustomRepositoryImpl implements EventCustomRepository {
                     .and("isDeleted")
                     .is(false)
                     .and("startDate")
-                    .regex("^" + startDate.toLocalDate().toString(), "i")))
+                    .regex("^" + startDate.toString(), "i")))
         .applyLogger(query -> LOGGER.info("Searching with query {}", query))
         .applyFunction(query -> mongoTemplate.find(query, Event.class, "event"))
         .getValue();

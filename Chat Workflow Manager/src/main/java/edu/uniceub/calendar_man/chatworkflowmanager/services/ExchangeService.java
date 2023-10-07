@@ -14,14 +14,17 @@ import edu.uniceub.calendar_man.chatworkflowmanager.open_ai.functions.contexts.G
 import edu.uniceub.calendar_man.chatworkflowmanager.properties.OpenAiProperties;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ExchangeService {
 
+  final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ExchangeService.class);
   private final OpenAiService openAiService;
 
   private final CalendarManagerClient calendarManagerClient;
@@ -46,12 +49,16 @@ public class ExchangeService {
 
     addSystemPrompt(requestMessages, messages);
 
-    final ChatMessage responseMessage =
+    LOGGER.info("Sending message to OpenAI: {}", messages.get(messages.size()-1));
+
+      final ChatMessage responseMessage =
         openAiService
             .createChatCompletion(buildChatRequest(messages, functionExecutor, user))
             .getChoices()
             .get(0)
             .getMessage();
+
+      LOGGER.info("Received response from OpenAI: {}", responseMessage);
 
     messages.add(responseMessage);
 
@@ -60,12 +67,18 @@ public class ExchangeService {
         .ifPresent(messages::add);
 
     if (requiresAssistantAction(messages)) {
+      LOGGER.info("Assistant action required. Executing assistant action function {}.", Iterables.getLast(messages).getName());
       return exchangeMessages(messages, user);
     }
 
     return messages;
   }
-
+  private static boolean requiresAssistantAction(List<ChatMessage> messages) {
+    final var lastMessage = Iterables.getLast(messages);
+    if (StringUtils.isNotBlank(lastMessage.getName())) {
+      return ASSISTANT_ACTION_FUNCTIONS.contains(lastMessage.getName()) ;
+    } else return !Objects.isNull(lastMessage.getFunctionCall());
+  }
   private ChatCompletionRequest buildChatRequest(
       List<ChatMessage> messages, FunctionExecutor functionExecutor, String userId) {
     return ChatCompletionRequest.builder()
@@ -102,13 +115,7 @@ public class ExchangeService {
     messages.addAll(requestMessages);
   }
 
-  private static boolean requiresAssistantAction(List<ChatMessage> messages) {
-    final var name = Iterables.getLast(messages).getName();
-    if (StringUtils.isNotBlank(name)) {
-      return ASSISTANT_ACTION_FUNCTIONS.contains(name);
-    }
-    return false;
-  }
+
 
   private Function<GetEventsRequest, Object> getEvents(final String user) {
     return request -> calendarManagerClient.getEvents(request.date, user);
