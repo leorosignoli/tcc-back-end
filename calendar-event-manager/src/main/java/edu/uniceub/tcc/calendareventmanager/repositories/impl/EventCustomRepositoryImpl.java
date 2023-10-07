@@ -5,9 +5,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 import edu.uniceub.tcc.calendareventmanager.helpers.monad.Monad;
 import edu.uniceub.tcc.calendareventmanager.models.Event;
 import edu.uniceub.tcc.calendareventmanager.repositories.EventCustomRepository;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;

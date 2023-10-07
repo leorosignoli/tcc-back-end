@@ -49,16 +49,16 @@ public class ExchangeService {
 
     addSystemPrompt(requestMessages, messages);
 
-    LOGGER.info("Sending message to OpenAI: {}", messages.get(messages.size()-1));
+    LOGGER.info("Sending message to OpenAI: {}", messages.get(messages.size() - 1));
 
-      final ChatMessage responseMessage =
+    final ChatMessage responseMessage =
         openAiService
             .createChatCompletion(buildChatRequest(messages, functionExecutor, user))
             .getChoices()
             .get(0)
             .getMessage();
 
-      LOGGER.info("Received response from OpenAI: {}", responseMessage);
+    LOGGER.info("Received response from OpenAI: {}", responseMessage);
 
     messages.add(responseMessage);
 
@@ -67,18 +67,22 @@ public class ExchangeService {
         .ifPresent(messages::add);
 
     if (requiresAssistantAction(messages)) {
-      LOGGER.info("Assistant action required. Executing assistant action function {}.", Iterables.getLast(messages).getName());
+      LOGGER.info(
+          "Assistant action required. Executing assistant action function {}.",
+          Iterables.getLast(messages).getName());
       return exchangeMessages(messages, user);
     }
 
     return messages;
   }
+
   private static boolean requiresAssistantAction(List<ChatMessage> messages) {
     final var lastMessage = Iterables.getLast(messages);
     if (StringUtils.isNotBlank(lastMessage.getName())) {
-      return ASSISTANT_ACTION_FUNCTIONS.contains(lastMessage.getName()) ;
+      return ASSISTANT_ACTION_FUNCTIONS.contains(lastMessage.getName());
     } else return !Objects.isNull(lastMessage.getFunctionCall());
   }
+
   private ChatCompletionRequest buildChatRequest(
       List<ChatMessage> messages, FunctionExecutor functionExecutor, String userId) {
     return ChatCompletionRequest.builder()
@@ -114,8 +118,6 @@ public class ExchangeService {
 
     messages.addAll(requestMessages);
   }
-
-
 
   private Function<GetEventsRequest, Object> getEvents(final String user) {
     return request -> calendarManagerClient.getEvents(request.date, user);

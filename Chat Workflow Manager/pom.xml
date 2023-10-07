@@ -136,7 +136,7 @@
 
 
     <build>
-        <finalName>calendar-event-management-service</finalName>
+        <finalName>chat-workflow-manager</finalName>
 
         <plugins>
             <plugin>

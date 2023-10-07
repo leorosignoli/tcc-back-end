@@ -19,6 +19,7 @@ class SaveAllEventsComponentTests extends BaseComponentTest {
 
   @Test
   void shouldSaveToDatabaseWhenRequestIsValid() throws JsonProcessingException {
+    mongoTemplate.dropCollection("events");
     final var eventListCreationRequest =
         new EventCreateAllRequest(
             "owner",

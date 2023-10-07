@@ -2,10 +2,9 @@ package edu.uniceub.calendar_man.chatworkflowmanager.configurations;
 
 import com.theokanning.openai.service.OpenAiService;
 import edu.uniceub.calendar_man.chatworkflowmanager.properties.OpenAiProperties;
+import java.time.Duration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.time.Duration;
 
 @Configuration
 public class OpenAiServiceConfig {

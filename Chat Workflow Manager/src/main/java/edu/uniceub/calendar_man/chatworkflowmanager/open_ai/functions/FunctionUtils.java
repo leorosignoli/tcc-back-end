@@ -4,16 +4,16 @@ import com.theokanning.openai.completion.chat.ChatFunction;
 import edu.uniceub.calendar_man.chatworkflowmanager.models.Event;
 import edu.uniceub.calendar_man.chatworkflowmanager.open_ai.functions.contexts.GetCurrentDateResponse;
 import edu.uniceub.calendar_man.chatworkflowmanager.open_ai.functions.contexts.GetEventsRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Function;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class FunctionUtils {
 
   final Logger LOGGER = LoggerFactory.getLogger(FunctionUtils.class);
+
   private FunctionUtils() {}
 
   public static final List<String> ASSISTANT_ACTION_FUNCTIONS =
@@ -42,8 +42,7 @@ public final class FunctionUtils {
         .name("get_current_date")
         .description("Returns the current date.")
         .executor(
-            Object.class,
-            empty -> GetCurrentDateResponse.fromDate(LocalDateTime.now().toString()))
+            Object.class, empty -> GetCurrentDateResponse.fromDate(LocalDateTime.now().toString()))
         .build();
   }
 }

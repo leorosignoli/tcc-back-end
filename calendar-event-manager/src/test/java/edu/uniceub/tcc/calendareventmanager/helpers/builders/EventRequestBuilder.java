@@ -1,6 +1,7 @@
 package edu.uniceub.tcc.calendareventmanager.helpers.builders;
 
 import edu.uniceub.tcc.calendareventmanager.api.dtos.request.EventRequest;
+import java.util.UUID;
 
 public class EventRequestBuilder {
   private String title;
@@ -37,7 +38,7 @@ public class EventRequestBuilder {
     this.title = "title";
     this.start = "2021-01-01T00:00:00";
     this.end = "2021-01-02T00:00:00";
-    this.integrationId = "integrationId";
+    this.integrationId = UUID.randomUUID().toString();
     return this;
   }
 

@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
 
 class GetAllEventsComponentTests extends BaseComponentTest {
 
-  private static final String GET_EVENTS_PATH = "/events";
+  private static final String GET_EVENTS_PATH = "/events/{owner}";
 
   @Test
   void shouldReturnAllEvents() {
@@ -26,8 +26,8 @@ class GetAllEventsComponentTests extends BaseComponentTest {
     var responseList =
         given()
             .contentType(ContentType.JSON)
-            .param("owner", "231231")
-            .param("startDate", "2021-06-01 00:00:00 +0000")
+            .pathParam("owner", "231231")
+            .param("startDate", "2021-06-01")
             .when()
             .get(GET_EVENTS_PATH)
             .then()

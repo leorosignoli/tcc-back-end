@@ -8,9 +8,7 @@ import edu.uniceub.tcc.calendareventmanager.helpers.mappers.EventMapper;
 import edu.uniceub.tcc.calendareventmanager.helpers.monad.Monad;
 import edu.uniceub.tcc.calendareventmanager.models.Event;
 import edu.uniceub.tcc.calendareventmanager.repositories.EventRepository;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.function.UnaryOperator;
