@@ -2,6 +2,11 @@
 server:
   port : 8081
 
+  spring:
+    data:
+      mongodb:
+        uri: mongodb+srv://${MONGODB_USER}:${MONGODB_PASSWORD}@main-cluster.6zmfnwo.mongodb.net/?retryWrites=true&w=majority
+        database: EventManagement
 # CHAT-GPT configuration properties
 openai:
   api:

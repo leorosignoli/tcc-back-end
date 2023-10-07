@@ -5,6 +5,7 @@ import static edu.uniceub.tcc.calendareventmanager.constants.LogConstants.Event.
 import static org.slf4j.LoggerFactory.*;
 
 import edu.uniceub.tcc.calendareventmanager.api.dtos.request.EventCreateAllRequest;
+import edu.uniceub.tcc.calendareventmanager.api.dtos.request.EventRequest;
 import edu.uniceub.tcc.calendareventmanager.api.dtos.response.EventResponse;
 import edu.uniceub.tcc.calendareventmanager.services.EventService;
 import java.util.HashMap;
@@ -41,11 +42,19 @@ public class EventsController {
     return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
-  @GetMapping
+  @PostMapping(path = "/simpleEvent")
+  @ResponseStatus(code = HttpStatus.CREATED)
+  public void createEvents(
+      @RequestBody final EventRequest eventsRequest, @RequestHeader final String owner) {
+    LOGGER.info(INFO_RECEIVED_EVENT_CREATION_REQUEST, eventsRequest);
+    eventService.createEvent(eventsRequest, owner);
+  }
+
+  @GetMapping(path = "/{owner}")
   public List<EventResponse> getEvents(
-      @RequestParam(name = "owner") final String eventOwner,
+      @PathVariable(name = "owner") final String eventOwner,
       @RequestParam(name = "startDate", required = false) final String startDate) {
-    LOGGER.debug(INFO_RECEIVED_GET_EVENTS_FOR_OWNER_REQUEST, eventOwner);
+    LOGGER.info(INFO_RECEIVED_GET_EVENTS_FOR_OWNER_REQUEST, eventOwner);
 
     return eventService.getEventsForOwner(eventOwner, startDate);
   }

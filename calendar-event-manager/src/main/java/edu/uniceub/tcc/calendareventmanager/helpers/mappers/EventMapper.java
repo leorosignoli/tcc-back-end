@@ -15,15 +15,14 @@ public interface EventMapper {
   Event toModel(EventRequest eventCreateAllRequest);
 
   @Mapping(target = "owner", source = "eventOwner")
+  Event toModel(EventRequest eventCreateAllRequest, String eventOwner);
+
+  @Mapping(target = "owner", source = "eventOwner")
   default List<Event> toModelList(List<EventRequest> eventCreateAllRequest, String eventOwner) {
 
     return eventCreateAllRequest.stream()
         .map(this::toModel)
-        .map(
-            event -> {
-              event.setOwner(eventOwner);
-              return event;
-            })
+        .map(event -> event.withOwner(eventOwner))
         .toList();
   }
 

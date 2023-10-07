@@ -11,7 +11,7 @@
 	<groupId>edu.uniceub.tcc</groupId>
 	<artifactId>calendar-event-manager</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>calendar-event-manager</name>
+	<name>Calendar Event Manager</name>
 	<description>Project that manages the user&apos;s calendar</description>
 	<properties>
 		<java.version>17</java.version>

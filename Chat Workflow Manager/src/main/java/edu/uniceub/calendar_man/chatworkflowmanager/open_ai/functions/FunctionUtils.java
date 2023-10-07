@@ -4,12 +4,16 @@ import com.theokanning.openai.completion.chat.ChatFunction;
 import edu.uniceub.calendar_man.chatworkflowmanager.models.Event;
 import edu.uniceub.calendar_man.chatworkflowmanager.open_ai.functions.contexts.GetCurrentDateResponse;
 import edu.uniceub.calendar_man.chatworkflowmanager.open_ai.functions.contexts.GetEventsRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Function;
 
 public final class FunctionUtils {
 
+  final Logger LOGGER = LoggerFactory.getLogger(FunctionUtils.class);
   private FunctionUtils() {}
 
   public static final List<String> ASSISTANT_ACTION_FUNCTIONS =

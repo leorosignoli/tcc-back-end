@@ -8,6 +8,8 @@ import edu.uniceub.tcc.calendareventmanager.helpers.mappers.EventMapper;
 import edu.uniceub.tcc.calendareventmanager.helpers.monad.Monad;
 import edu.uniceub.tcc.calendareventmanager.models.Event;
 import edu.uniceub.tcc.calendareventmanager.repositories.EventRepository;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -28,6 +30,13 @@ public class EventService {
     this.eventMapper = eventMapper;
   }
 
+  public void createEvent(EventRequest eventRequest, String owner) {
+    Monad.init(eventRequest)
+        .applyFunction(request -> eventMapper.toModel(request, owner))
+        .applyConsumer(eventRepository::save)
+        .applyLogger(event -> LOGGER.info("Event created: {}", event));
+  }
+
   public List<String> createEvents(
       final List<EventRequest> eventCreateAllRequests, final String eventOwner) {
     return Monad.init(eventCreateAllRequests)
@@ -43,8 +52,8 @@ public class EventService {
 
   public List<EventResponse> getEventsForOwner(String eventOwner, String startDate) {
 
-    return Monad.init(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss Z"))
-        .applyFunction(formatter -> LocalDateTime.parse(startDate, formatter))
+    return Monad.init(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        .applyFunction(formatter -> LocalDate.parse(startDate, formatter))
         .applyFunction(date -> eventRepository.findAllByOwnerAndDate(eventOwner, date))
         .applyLogger(events -> LOGGER.debug("Events found for owner {}: {}", eventOwner, events))
         .applyFunction(eventMapper::toResponseList)
